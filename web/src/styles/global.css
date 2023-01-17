@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.habit {
+    width: 40;
+    height: 40;
+    border: 1 solid purple;
+    border-radius: 8;
+    background-color: purple;
+}
