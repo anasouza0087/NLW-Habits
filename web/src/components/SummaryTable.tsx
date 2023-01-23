@@ -1,3 +1,6 @@
+import dayjs from "dayjs"
+import { useEffect, useState } from "react"
+import { api } from "../lib/axios"
 import { generateRangeDates } from "../utils/generate-range-dates"
 import { HabitDay } from "./HabitDay"
 
@@ -8,7 +11,22 @@ const summaryDates = generateRangeDates()
 const minimumSummaryDates = 18 * 7
 const amountOfDaysToFill = minimumSummaryDates - summaryDates.length
 
+type Summary = Array<{
+    id: string,
+    date: Date,
+    amount: number,
+    completed: number
+}>
+
 export const SummaryTable = () => {
+
+    const [summary, setSummary] = useState<Summary>([])
+
+    useEffect(() => {
+        api.get('summary').then(response => {
+            setSummary(response?.data)
+        })
+    }, [])
 
     return (
         <div className="w-full flex">
@@ -22,11 +40,15 @@ export const SummaryTable = () => {
                 })}
             </div>
             <div className="grid grid-rows-7 grid-flow-col gap-3">
-                {summaryDates.map(() => {
+                {summaryDates.map(date => {
+                    const dayinSummary = summary.find(day => {
+                        return dayjs(date).isSame(day.date, 'day')
+                    })
                     return (
                         <HabitDay
-                            amount={5}
-                            completed={Math.round(Math.random() * 5)}
+                            date={date}
+                            amount={dayinSummary?.amount}
+                            completed={dayinSummary?.completed}
                         />
                     )
                 }
